@@ -5,6 +5,7 @@ import com.hz.snowslide.controller.IdController;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -18,14 +19,22 @@ class SnowSlideApplicationTests {
 
     @Test
     void contextLoads() {
+        int size = 10;
+        List<Long> list = null;
         while (true){
             try {
-                TimeUnit.MILLISECONDS.sleep(200L);
+                TimeUnit.MILLISECONDS.sleep(10l);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            List<Long> batch = idController.batch(10);
-            System.out.println(batch.size());
+            List<Long> batch = idController.batch(size);
+            if(batch.size() != size){
+                System.out.println(list);
+                System.out.println("----------------");
+                System.out.println(batch);
+            }
+            list = batch;
+
         }
 
     }

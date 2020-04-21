@@ -41,13 +41,12 @@ public class Consumer implements WorkHandler<LongEvent> {
         if (count.get() <= 0) {
             this.workerLock.setStop(true);
         } else {
-            produce(longEvent);
+            produceVolatile(longEvent);
             count.decrementAndGet();
             if (count.get() == 0) {
                 this.workerLock.setStop(true);
             }
         }
-
         return this.workerLock;
     }
 
@@ -57,18 +56,25 @@ public class Consumer implements WorkHandler<LongEvent> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //            list.add(longEvent.getValue());
+    }
+
+    private void produceVolatile(LongEvent longEvent) {
+        list.add(longEvent.getValue());
+//        11
+/*        if(list.size() + count.get() != 11){
+            System.out.println(list.toString());
+            System.out.println(count.get() + "  ----  " + list);
+        }*/
     }
 
     public List<Long> getBatchIds(long size) {
+        count.set(size);
         while (workerLock.isStop()) {
-            count.compareAndSet(0, size);
             synchronized (workerLock) {
                 workerLock.notify();
             }
         }
-
-        return consume(size);
+        return consumeVolatile(size);
     }
 
     private List<Long> consume(Long size) {
