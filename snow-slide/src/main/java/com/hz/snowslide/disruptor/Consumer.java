@@ -67,10 +67,7 @@ public class Consumer implements WorkHandler<LongEvent> {
                 workerLock.notify();
             }
         }
-        while (!workerLock.isStop()) {
-            //自旋即可
-            //这个地方应该是单线程运行的
-        }
+
         return consume(size);
     }
 
@@ -88,6 +85,15 @@ public class Consumer implements WorkHandler<LongEvent> {
                 e.printStackTrace();
             }
         });
+        return result;
+    }
+
+    private List<Long> consumeVolatile(Long size) {
+        while (!workerLock.isStop()) ;
+        //自旋即可
+        //这个地方应该是单线程运行的
+        ArrayList<Long> result = new ArrayList<>(list);
+        list = new ArrayList<>();
         return result;
     }
 

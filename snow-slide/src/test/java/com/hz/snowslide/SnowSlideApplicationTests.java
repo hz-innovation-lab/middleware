@@ -25,9 +25,7 @@ class SnowSlideApplicationTests {
                 e.printStackTrace();
             }
             List<Long> batch = idController.batch(10);
-            if(batch.size() == 20){
-                System.out.println(batch);
-            }
+            System.out.println(batch.size());
         }
 
     }
