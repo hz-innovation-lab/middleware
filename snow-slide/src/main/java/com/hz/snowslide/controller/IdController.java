@@ -16,6 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -34,14 +35,17 @@ public class IdController {
     private UniqueIdGenerator uniqueIdGenerator;
 
     @RequestMapping("/batch/{size}")
-    public String batch(@PathVariable("size") int size) {
+    public List<Long> batch(@PathVariable("size") int size) {
         List<Long> result = uniqueIdGenerator.nextBatchId(size).getModel();
+/*        if(result.size() == 20){
+            System.out.println(result.toString());
+        }
         StringBuilder s = new StringBuilder();
         result.forEach(e -> {
             s.append(e);
             s.append("\r\n");
-        });
-        return s.toString();
+        });*/
+        return result;
     }
 
     @RequestMapping("/test/{size}")

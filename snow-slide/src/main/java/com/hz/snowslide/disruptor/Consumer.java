@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.IntStream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +33,7 @@ public class Consumer implements WorkHandler<LongEvent> {
 
     private final WorkerLock workerLock = new WorkerLock();
 
-    private List<Long> list = new ArrayList<>();
+    private volatile List<Long> list = new ArrayList<>();
 
     @Override
     public WorkerLock onEvent(LongEvent longEvent) {
@@ -40,7 +41,7 @@ public class Consumer implements WorkHandler<LongEvent> {
         if (count.get() <= 0) {
             this.workerLock.setStop(true);
         } else {
-            list.add(longEvent.getValue());
+            produce(longEvent);
             count.decrementAndGet();
             if (count.get() == 0) {
                 this.workerLock.setStop(true);
@@ -50,18 +51,43 @@ public class Consumer implements WorkHandler<LongEvent> {
         return this.workerLock;
     }
 
+    private void produce(LongEvent longEvent) {
+        try {
+            synchronousQueue.put(longEvent.getValue());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //            list.add(longEvent.getValue());
+    }
+
     public List<Long> getBatchIds(long size) {
         while (workerLock.isStop()) {
-            count.set(size);
+            count.compareAndSet(0, size);
             synchronized (workerLock) {
                 workerLock.notify();
             }
         }
         while (!workerLock.isStop()) {
             //自旋即可
+            //这个地方应该是单线程运行的
         }
+        return consume(size);
+    }
+
+    private List<Long> consume(Long size) {
+/*
         ArrayList<Long> result = new ArrayList<>(list);
-        list.clear();
+        list = new ArrayList<>();
+*/
+
+        List<Long> result = new ArrayList<>(size.intValue());
+        IntStream.range(0, size.intValue()).forEach(i -> {
+            try {
+                result.add(synchronousQueue.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         return result;
     }
 
