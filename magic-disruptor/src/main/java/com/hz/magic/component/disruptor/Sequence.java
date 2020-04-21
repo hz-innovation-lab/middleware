@@ -47,6 +47,7 @@ public class Sequence extends RhsPadding
 {
     static final long INITIAL_VALUE = -1L;
     private static final Unsafe UNSAFE;
+    public volatile boolean stop = false;
     private static final long VALUE_OFFSET;
 
     static

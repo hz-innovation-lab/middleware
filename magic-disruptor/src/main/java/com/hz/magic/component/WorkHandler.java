@@ -31,5 +31,5 @@ public interface WorkHandler<T>
      * @param event published to the {@link RingBuffer}
      * @throws Exception if the {@link WorkHandler} would like the exception handled further up the chain.
      */
-    void onEvent(T event) throws Exception;
+    WorkerLock onEvent(T event) throws Exception;
 }

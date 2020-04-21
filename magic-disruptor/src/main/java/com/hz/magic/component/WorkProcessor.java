@@ -157,7 +157,20 @@ public final class WorkProcessor<T>
                 if (cachedAvailableSequence >= nextSequence)
                 {
                     event = ringBuffer.get(nextSequence);
-                    workHandler.onEvent(event);
+                    WorkerLock workerLock = workHandler.onEvent(event);
+                    if(workerLock.isStop()){
+                        sequence.stop = true;
+                        //阻塞之前加数次自旋如何？ 取的时候就取第一个,这样子是不是可以不用进入wait notify
+                        synchronized (workerLock){
+                            try {
+                                workerLock.wait();
+                                //等待线程唤醒
+                            } catch (InterruptedException e) {
+                            }
+                        }
+                        sequence.stop = false;
+                        workerLock.setStop(false);
+                    }
                     processedSequence = true;
                 }
                 else

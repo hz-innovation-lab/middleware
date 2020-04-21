@@ -1,0 +1,8 @@
+server:
+  port: 8080
+ringBuffer:
+  maxSize: 16
+#  maxSize: 4
+#  2^20 ringBuffer\u5927\u5C0F
+disruptor:
+  consumerSize: 10

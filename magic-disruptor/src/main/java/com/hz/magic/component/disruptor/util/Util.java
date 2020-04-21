@@ -62,10 +62,19 @@ public final class Util
      */
     public static long getMinimumSequence(final Sequence[] sequences, long minimum)
     {
-        for (int i = 0, n = sequences.length; i < n; i++)
-        {
-            long value = sequences[i].get();
-            minimum = Math.min(minimum, value);
+        boolean flag = false;
+        for (int i = 0, n = sequences.length; i < n; i++) {
+            if (!sequences[i].stop) {
+                flag = true;
+                long value = sequences[i].get();
+                minimum = Math.min(minimum, value);
+            } else {
+                //
+                if (i == sequences.length - 1 && !flag) {
+                    long value = sequences[i].get();
+                    minimum = Math.min(minimum, value);
+                }
+            }
         }
 
         return minimum;

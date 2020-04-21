@@ -3,7 +3,6 @@ package com.hz.magic.component.disruptor.dsl;
 import com.hz.magic.component.SequenceBarrier;
 import com.hz.magic.component.WorkerPool;
 import com.hz.magic.component.disruptor.Sequence;
-import com.lmax.disruptor.*;
 
 import java.util.concurrent.Executor;
 
