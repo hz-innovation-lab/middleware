@@ -27,7 +27,7 @@ public class BatchIdConsumer extends IdConsumer {
          */
         Cursor cursor = updateCursor(this.cursor);
         this.cursor = cursor;
-        return flake.getIdByCursor(cursor);
+        return flake.getIdByCursor(cursor, false);
     }
 
 }

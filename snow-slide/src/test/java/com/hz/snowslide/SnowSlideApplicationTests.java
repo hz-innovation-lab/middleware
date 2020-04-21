@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -20,21 +22,19 @@ class SnowSlideApplicationTests {
     @Test
     void contextLoads() {
         int size = 10;
-        List<Long> list = null;
+        Set<Long> set = new HashSet<>();
         while (true){
             try {
-                TimeUnit.MILLISECONDS.sleep(10l);
+                TimeUnit.MILLISECONDS.sleep(10L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             List<Long> batch = idController.batch(size);
-            if(batch.size() != size){
-                System.out.println(list);
-                System.out.println("----------------");
-                System.out.println(batch);
-            }
-            list = batch;
-
+            batch.forEach(e->{
+                if(!set.add(e)){
+                    System.out.println("cry");
+                }
+            });
         }
 
     }

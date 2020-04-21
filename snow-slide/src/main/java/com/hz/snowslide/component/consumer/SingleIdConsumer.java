@@ -23,13 +23,13 @@ public class SingleIdConsumer extends IdConsumer {
         Cursor cursor = updateCursor(this.cursor);
         this.cursor = cursor;
         //起始时间戳,69年
-        return flake.getIdByCursor(cursor);
+        return flake.getIdByCursor(cursor, true);
     }
 
     public synchronized long fixId() {
         Cursor cursor = updateCursor(this.cursor);
         this.cursor = cursor;
-        return flake.getIdByCursor(cursor);
+        return flake.getIdByCursor(cursor, true);
     }
 
 

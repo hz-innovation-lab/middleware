@@ -58,8 +58,13 @@ public class Flake implements InitializingBean {
 
     private long workId = workMask;
 
-    public long getIdByCursor(Cursor cursor) {
-        return ((cursor.getCursor() - twepoch) << timestampShift) | room << roomShift | workId << workShift | SINGLE_TYPE << typeShift | cursor.getSequence();
+    public long getIdByCursor(Cursor cursor, boolean single) {
+        if(single){
+            return ((cursor.getCursor() - twepoch) << timestampShift) | room << roomShift | workId << workShift | SINGLE_TYPE << typeShift | cursor.getSequence();
+        }else {
+            return ((cursor.getCursor() - twepoch) << timestampShift) | room << roomShift | workId << workShift | BATCH_TYPE << typeShift | cursor.getSequence();
+        }
+
     }
 
     @Override
