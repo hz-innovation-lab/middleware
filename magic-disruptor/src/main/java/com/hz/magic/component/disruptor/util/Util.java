@@ -63,6 +63,13 @@ public final class Util
     public static long getMinimumSequence(final Sequence[] sequences, long minimum)
     {
         boolean flag = false;
+        /**
+         * 原版是必须cpu自旋等待所有消费者消费完slot1,刷新到slot_n之后才能继续生产。
+         * 主要是为了防止消费者消费过程中老的序列所在的slot被生产者写入.
+         * 但是其实是没有必要的,如果我们的消费者已经消费完了数据,要wait sleep等,生产者duck不必去等待消费者的进度。
+         * 所以wait,sleep必须发生在消费者消费完数据之后,这时生产者可以根据其消费完正在休眠这个属性来确认无需等待他.
+         * 但是如果所有消费者都休眠的话,生产者会开始无限自嗨,这样是不行的,所以必须留一个消费者跟生产者刚,阻塞其
+         */
         for (int i = 0, n = sequences.length; i < n; i++) {
             if (!sequences[i].stop) {
                 flag = true;
