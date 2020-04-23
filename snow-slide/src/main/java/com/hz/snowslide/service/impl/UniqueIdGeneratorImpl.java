@@ -3,7 +3,7 @@ package com.hz.snowslide.service.impl;
 import com.hz.snowslide.common.Constant;
 import com.hz.snowslide.common.Result;
 import com.hz.snowslide.common.ResultUtil;
-import com.hz.snowslide.component.consumer.SingleIdConsumer;
+import com.hz.snowslide.component.producer.SingleIdProducer;
 import com.hz.snowslide.disruptor.Consumer;
 import com.hz.snowslide.disruptor.ConsumerPool;
 import com.hz.snowslide.service.UniqueIdGenerator;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UniqueIdGeneratorImpl implements UniqueIdGenerator {
 
     @Resource
-    private SingleIdConsumer singleIdProducer;
+    private SingleIdProducer singleIdProducer;
 
     @Resource
     private ConsumerPool consumerPool;

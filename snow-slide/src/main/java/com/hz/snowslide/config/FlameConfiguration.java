@@ -5,16 +5,16 @@ import com.hz.magic.component.disruptor.RingBuffer;
 import com.hz.magic.component.disruptor.dsl.Disruptor;
 import com.hz.magic.component.disruptor.dsl.ProducerType;
 import com.hz.snowslide.common.FlameThreadFactory;
-import com.hz.snowslide.component.consumer.BatchIdConsumer;
-import com.hz.snowslide.component.consumer.SingleIdConsumer;
 import com.hz.snowslide.component.flake.Cursor;
 import com.hz.snowslide.component.flake.Flake;
+import com.hz.snowslide.component.producer.BatchIdProducer;
+import com.hz.snowslide.component.producer.SingleIdProducer;
 import com.hz.snowslide.disruptor.Consumer;
 import com.hz.snowslide.disruptor.ConsumerPool;
-import com.hz.snowslide.disruptor.FlameExceptionHandler;
 import com.hz.snowslide.disruptor.LongEvent;
 import com.hz.snowslide.disruptor.LongEventFactory;
 import com.hz.snowslide.disruptor.LongEventProducer;
+import com.hz.snowslide.disruptor.SnowSlideExceptionHandler;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,13 +41,13 @@ public class FlameConfiguration {
     private long currentMills = System.currentTimeMillis();
 
     @Bean
-    public SingleIdConsumer singleIdProducer(Flake flake) {
-        return new SingleIdConsumer(new Cursor(currentMills), flake);
+    public SingleIdProducer singleIdProducer(Flake flake) {
+        return new SingleIdProducer(new Cursor(currentMills), flake);
     }
 
     @Bean
-    public BatchIdConsumer batchIdProducer(Flake flake) {
-        return new BatchIdConsumer(new Cursor(currentMills), flake);
+    public BatchIdProducer batchIdProducer(Flake flake) {
+        return new BatchIdProducer(new Cursor(currentMills), flake);
     }
 
     @Bean
@@ -62,7 +62,7 @@ public class FlameConfiguration {
     }
 
     @Bean
-    public Disruptor disruptor(ConsumerPool consumerPool, BatchIdConsumer batchIdConsumer, @Value("${ringBuffer.maxSize}") int ringBufferSize, ThreadPoolExecutor threadPoolExecutor) {
+    public Disruptor disruptor(ConsumerPool consumerPool, BatchIdProducer batchIdProducer, @Value("${ringBuffer.maxSize}") int ringBufferSize, ThreadPoolExecutor threadPoolExecutor) {
         LongEventFactory eventFactory = new LongEventFactory();
         Disruptor<LongEvent> disruptor = new Disruptor<>(eventFactory, ringBufferSize, threadPoolExecutor,
                 ProducerType.SINGLE, new BlockingWaitStrategy());
@@ -70,13 +70,13 @@ public class FlameConfiguration {
         // 创建n个消费者来处理同一个生产者发的消息
         Consumer[] consumers = new Consumer[consumerPool.getConsumerList().size()];
         consumerPool.getConsumerList().toArray(consumers);
-        disruptor.handleExceptionsWith(new FlameExceptionHandler());
+        disruptor.handleExceptionsWith(new SnowSlideExceptionHandler());
         disruptor.handleEventsWithWorkerPool(consumers);
         disruptor.start();
         LongEventProducer longEventProducer = new LongEventProducer(ringBuffer);
         threadPoolExecutor.execute(() -> {
             while (true) {
-                long id = batchIdConsumer.getId();
+                long id = batchIdProducer.getId();
                 longEventProducer.onData(id);
             }
         });

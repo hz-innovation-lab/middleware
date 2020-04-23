@@ -1,4 +1,4 @@
-package com.hz.snowslide.component.consumer;
+package com.hz.snowslide.component.producer;
 
 import com.hz.snowslide.component.flake.Cursor;
 import com.hz.snowslide.component.flake.Flake;
@@ -11,7 +11,7 @@ import com.hz.snowslide.component.flake.Flake;
  * @author baiyundou
  * @date 2020/4/11 7:07
  */
-public abstract class IdConsumer {
+public abstract class IdProducer {
 
     protected Cursor cursor;
 

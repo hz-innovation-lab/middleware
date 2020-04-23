@@ -74,7 +74,7 @@ public class Flake implements InitializingBean {
         if (this.room < 0 || this.room > roomMask) {
             throw new RuntimeException(String.format("room room can't be greater than %d or less than 0", 9));
         }
-        //机器id
+        //机器id  zkNode节点自增
         this.workId = 1L;
         if (this.workId > workMask) {
             throw new RuntimeException(String.format("workId can't be greater than %d", workMask));

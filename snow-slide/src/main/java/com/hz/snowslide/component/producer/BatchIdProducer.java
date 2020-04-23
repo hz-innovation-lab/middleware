@@ -1,4 +1,4 @@
-package com.hz.snowslide.component.consumer;
+package com.hz.snowslide.component.producer;
 
 import com.hz.snowslide.component.flake.Cursor;
 import com.hz.snowslide.component.flake.Flake;
@@ -14,9 +14,9 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/4/11 7:15
  */
 @Slf4j
-public class BatchIdConsumer extends IdConsumer {
+public class BatchIdProducer extends IdProducer {
 
-    public BatchIdConsumer(Cursor cursor, Flake flake) {
+    public BatchIdProducer(Cursor cursor, Flake flake) {
         this.cursor = cursor;
         this.flake = flake;
     }

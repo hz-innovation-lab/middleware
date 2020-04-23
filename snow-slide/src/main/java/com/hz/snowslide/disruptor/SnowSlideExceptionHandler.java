@@ -11,7 +11,7 @@ import com.hz.magic.component.ExceptionHandler;
  * @author baiyundou
  * @date 2020/4/21 6:38
  */
-public class FlameExceptionHandler implements ExceptionHandler {
+public class SnowSlideExceptionHandler implements ExceptionHandler {
 
     @Override
     public void handleEventException(Throwable ex, long sequence, Object event) {
