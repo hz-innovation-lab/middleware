@@ -28,31 +28,31 @@ public abstract class IdProducer {
         long sequence = cursor.getSequence();
         //sequence是序列号
         long lastTimestamp = cursor.getLastTimestamp();
-        long cursortmp = cursor.getCursor();
-        if (lastTimestamp == timestamp) {
+        long cursorTmp = cursor.getCursor();
+        if (lastTimestamp >= timestamp) {
+            //时钟回拨或者是同一毫秒
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 //sequence归0,需要等时间戳超过过去的秒
                 timestamp = tilNextMillis(lastTimestamp);
-                cursortmp = timestamp;
+                cursorTmp = timestamp;
             }
-        } else if (timestamp < lastTimestamp) {
-            //时钟回拨.游标自增,sequence作0
-            cursortmp = cursortmp + 1;
-            sequence = 0L;
         } else {
             //timestamp > lastTimestamp 正常情况
-            if (cursortmp > timestamp) {
-                cursortmp = cursortmp + 1;
-                //游标大于时间戳, 这是由于之前时钟回拨了.游标自增即可
+            if (cursorTmp > timestamp) {
+                //可能是当前系统时间戳不太行,落后于zk同步下来的,
+                //也可能是时钟回拨。
+                //无论什么情况,我们可以以cursorTmp为准.
+                //如果以timestamp为准可能会导致获得主键不符合自增规则.
+                cursorTmp = cursorTmp + 1;
             } else {
                 //新的游标更新为当前时间戳
-                cursortmp = timestamp;
+                cursorTmp = timestamp;
             }
             //是新的一轮了
             sequence = 0L;
         }
-        return new Cursor(cursortmp, timestamp, sequence);
+        return new Cursor(cursorTmp, timestamp, sequence);
     }
 
     private long timeGen() {

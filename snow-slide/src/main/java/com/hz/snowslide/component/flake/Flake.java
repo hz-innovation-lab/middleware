@@ -36,7 +36,7 @@ public class Flake implements InitializingBean {
 
     private static final long typeMask = -1L ^ (-1L << typeBits);
 
-    //毫秒内部的序列号 一秒钟最多多少个
+    //毫秒内部的序列号 一毫秒最多2的14次方个
     private static final long sequenceBits = 14L;
 
     //毫秒序列号

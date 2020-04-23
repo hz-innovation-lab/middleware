@@ -25,6 +25,7 @@ public class BatchIdProducer extends IdProducer {
         /**
          * 单生产者,不存在线程安全问题
          */
+//        游标初始化值是zk同步获得,与当前时间戳大小不一
         Cursor cursor = updateCursor(this.cursor);
         this.cursor = cursor;
         return flake.getIdByCursor(cursor, false);
